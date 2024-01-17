@@ -1,0 +1,32 @@
+version: "3.9"
+services:
+  idp-db:
+      image: postgres
+      volumes:
+        - idp-db-vol:/var/lib/postgresql/data
+      restart: always
+      ports: 
+        - 5432:5432
+      env_file:
+        - ./environments/postgres.${ENV}.env
+  idp:
+    build: ./idp
+    restart: always
+    ports: 
+      - 8443:8443
+    env_file:
+      - ./environments/keycloak.${ENV}.env
+    depends_on:
+      - idp-db
+    links:
+      - idp-db
+    command:
+      start-dev #--verbose or --optimized
+volumes:
+  idp-db-vol:
+
+
+
+#docker-compose build --no-cache
+#docker-compose up -d
+        
